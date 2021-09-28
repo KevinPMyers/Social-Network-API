@@ -6,14 +6,14 @@ getAllUsers(req, res) {
     Users.find({})
     .populate({
         path: 'thoughts',
-        select: '-__v'
+        
     })
-    .select('-__v')
+    
     .sort({ _id: -1})
     .then(dbUserData => res.json(dbUserData))
     .catch(err => {
         console.log(err);
-        res.status(400).json(err);
+        res.status(500).json(err);
     });
 },
 
@@ -22,9 +22,9 @@ getUserById({ params }, res) {
     User.findOne({ _id: params.id })
     .populate({
         path: 'users',
-        select: '-__v'
+        
     })
-    .select('-__v')
+    
     .then(dbUserData => {
         // if no user found, send 404
         if (!dbUserData) {
@@ -35,7 +35,7 @@ getUserById({ params }, res) {
     })
     .catch(err => {
         console.log(err);
-        res.status(400).json(err);
+        res.status(500).json(err);
     });
 },
 
@@ -43,20 +43,24 @@ getUserById({ params }, res) {
 createUser({ body }, res) {
     User.create(body)
     .then(dbUserData => res.json(dbUserData))
-    .catch(err => res.status(400).json(err));
+    .catch(err => res.status(500).json(err));
 },
 
 // update user by Id
 updateUser({ params, body }, res) {
-    User.findOneAndUpdate({ _id: params.id }, body, { new: true })
+    User.findOneAndUpdate(
+        { _id: params.id }, 
+        body, 
+        { new: true }
+        )
     .then(dbUserData => {
         if (!dbUserData) {
-            res.status(400).json({ message: 'No user found with this ID' });
+            res.status(404).json({ message: 'No user found with this ID' });
             return;
         }
         res.json(dbUserData);
     })
-    .catch(err => res.status(400).json(err));
+    .catch(err => res.status(500).json(err));
 },
 
 // delete User
@@ -64,12 +68,12 @@ deleteUser({ params}, res) {
     User.findOneAndDelete({ _id: params.id })
     .then(dbUserData => {
         if (!dbUserData) {
-            res.status(400).json({ message: 'No pizza found with this id'});
+            res.status(404).json({ message: 'No pizza found with this id'});
             return;
         }
         res.json(dbUserData);
     })
-    .catch(err => res.status(400).json(err));
+    .catch(err => res.status(500).json(err));
 }
 };
 
