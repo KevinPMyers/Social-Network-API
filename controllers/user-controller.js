@@ -1,4 +1,4 @@
-const { User } = require('../models');
+const { User, Thought } = require('../models');
 
 const userController = {
 // get all users
@@ -6,6 +6,7 @@ getAllUsers(req, res) {
     User.find({})
     .populate({
         path: 'thoughts',
+        populate: { path: 'reactions' }
         
     })
     
@@ -20,10 +21,13 @@ getAllUsers(req, res) {
 // get user by ID
 getUserById({ params }, res) {
     User.findOne({ _id: params.id })
-    .populate({
-        path: 'users',
+    .populate(
+        { path: 'thoughts',
+        path: 'friends'
+     }
         
-    })
+        
+    )
     
     .then(dbUserData => {
         // if no user found, send 404

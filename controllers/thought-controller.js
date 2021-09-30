@@ -4,7 +4,7 @@ const thoughtController = {
     getAllThoughts(req, res) {
         Thought.find({})
         .populate({
-            path: 'users'
+            path: 'reactions'
         })
         .sort({ _id: -1})
         .then(dbThoughtData => res.json(dbThoughtData))
@@ -17,7 +17,7 @@ const thoughtController = {
     getThoughtById({ params}, res) {
         Thought.findOne({ _id: params.id })
         .populate({
-            path: 'users'
+            path: 'reactions'
 
         })
         .sort({ _id: -1})
@@ -34,8 +34,8 @@ const thoughtController = {
         Thought.create(body)
         .then(({ _id }) => {
             return User.findOneAndUpdate(
-                { _id: params.UserId },
-                { $push: { thoughts: _id } },
+                { _id: body.UserId },
+                { $push: { thoughts: dbThoughtData._id } },
                 { new: true }
             );
         })
@@ -67,19 +67,23 @@ const thoughtController = {
     },
 
     deleteThought({ params, body}, res) {
-        Thought.findOneAndDelete(
-            { _id: params.id },
-            body,
-            {new: true }
-        )
+        Thought.findOneAndDelete({ _id: params.id })
         .then(dbThoughtData => {
-            if (!dbThoughtData) {
-                res.status(404).json({ message: 'No thought found with this Id' });
-                return;
-            }
-            res.json(dbThoughtData);
+            User.findOneAndUpdate (
+                { _id: body.userId },
+                { $pull: { thoughts: dbThoughtData._id }},
+                {new: true }
+            )
+            .then(dbThoughtData => {
+                if (!dbThoughtData) {
+                    res.status(404).json({ message: 'The thought for this user has been deleted' });
+                    return;
+                }
+                res.json(dbThoughtData);
+            })
+            .catch(err => res.json(err));
         })
-        .catch(err => res.status(500).json(err));
+        .catch(err => res.json(err));
     },
 
     addReaction({ params }, res) {
