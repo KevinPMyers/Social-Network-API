@@ -41,8 +41,8 @@ As a social media startup, I want an API for my social network that uses a NoSQL
 * Mongoose
 
 ## Video Walk-Through Link
-INTRO: https://watch.screencastify.com/v/ubqPBdaOx6RX9s33gvEz
-Insomnia Routing Video(s): https://watch.screencastify.com/v/DPLcVHw7TNFxirpu40R1
+* INTRO: https://watch.screencastify.com/v/ubqPBdaOx6RX9s33gvEz
+* Insomnia Routing Video(s): https://watch.screencastify.com/v/DPLcVHw7TNFxirpu40R1
 
 
 ## Liscense
